@@ -24,7 +24,7 @@
         }
         
         .container {
-            max-width: 600px;
+            max-width: 800px;
             margin: 0 auto;
             background: white;
             border-radius: 20px;
@@ -53,6 +53,23 @@
         
         .content {
             padding: 50px 30px;
+        }
+        
+        .app-section {
+            margin-bottom: 40px;
+        }
+        
+        .app-section:last-child {
+            margin-bottom: 0;
+        }
+        
+        .app-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #4f46e5;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e5e7eb;
         }
         
         .button {
@@ -109,10 +126,24 @@
             <p>Destek ve Gizlilik Politikası</p>
         </div>
         
-        <div class="content" style="display: flex; flex-direction: column; gap: 20px;">
-            <a href="muminai/privacy-policy.html" class="button">Mümin AI Gizlilik Politikası</a>
-            <a href="muminai/support.html" class="button">Mümin AI Destek</a>
-            <a href="muminai/user-agreement.html" class="button">Mümin AI Kullanıcı Sözleşmesi</a>
+        <div class="content">
+            <div class="app-section">
+                <h2 class="app-title">Mümin AI</h2>
+                <div style="display: flex; flex-direction: column; gap: 20px;">
+                    <a href="muminai/privacy-policy.html" class="button">Gizlilik Politikası</a>
+                    <a href="muminai/support.html" class="button">Destek</a>
+                    <a href="muminai/user-agreement.html" class="button">Kullanıcı Sözleşmesi</a>
+                </div>
+            </div>
+            
+            <div class="app-section">
+                <h2 class="app-title">Christ AI</h2>
+                <div style="display: flex; flex-direction: column; gap: 20px;">
+                    <a href="christai/privacy-policy.html" class="button">Privacy Policy</a>
+                    <a href="christai/support.html" class="button">Support</a>
+                    <a href="christai/user-agreement.html" class="button">User Agreement</a>
+                </div>
+            </div>
         </div>
     </div>
 </body>
