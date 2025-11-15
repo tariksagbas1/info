@@ -1,0 +1,570 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Admin Dashboard</title>
+    <style>
+      :root {
+        color-scheme: light dark;
+        font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont,
+          "Segoe UI", sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: #f4f6fb;
+        color: #111827;
+      }
+
+      .layout {
+        display: flex;
+        min-height: 100vh;
+      }
+
+      .sidebar {
+        width: 240px;
+        padding: 32px 24px;
+        background: linear-gradient(180deg, #111827 0%, #1f2937 100%);
+        color: #f9fafb;
+        display: flex;
+        flex-direction: column;
+        gap: 32px;
+      }
+
+      .sidebar h1 {
+        font-size: 1.4rem;
+        margin: 0;
+      }
+
+      .nav-links {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      .nav-links a {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 14px;
+        border-radius: 10px;
+        color: inherit;
+        text-decoration: none;
+        font-weight: 600;
+        transition: background 0.2s ease, transform 0.2s ease;
+      }
+
+      .nav-links a:hover {
+        background: rgba(255, 255, 255, 0.08);
+        transform: translateX(4px);
+      }
+
+      .nav-links a.active {
+        background: rgba(79, 70, 229, 0.25);
+        color: #c7d2fe;
+      }
+
+      .content {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+        min-height: 100vh;
+      }
+
+      header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 20px;
+        padding: 24px 32px;
+        background: #fff;
+        box-shadow: 0 1px 0 rgba(15, 23, 42, 0.08);
+        position: sticky;
+        top: 0;
+        z-index: 10;
+      }
+
+      header h2 {
+        margin: 0;
+        font-size: 1.5rem;
+        display: flex;
+        align-items: center;
+        gap: 12px;
+      }
+
+      .header-actions {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        flex-wrap: wrap;
+      }
+
+      header button {
+        border: none;
+        border-radius: 10px;
+        padding: 10px 16px;
+        font-size: 0.95rem;
+        font-weight: 600;
+        cursor: pointer;
+        background: #1f2937;
+        color: #fff;
+        transition: opacity 0.2s ease;
+      }
+
+      header button:hover {
+        opacity: 0.9;
+      }
+
+      main {
+        padding: 32px;
+        max-width: 1200px;
+        width: 100%;
+        margin: 0 auto;
+        display: grid;
+        gap: 28px;
+      }
+
+      .metrics {
+        display: grid;
+        gap: 18px;
+        grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      }
+
+      .metric-card {
+        background: #fff;
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 16px 40px rgba(15, 23, 42, 0.08);
+        display: grid;
+        gap: 10px;
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+      }
+
+      .metric-card:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 22px 45px rgba(15, 23, 42, 0.12);
+      }
+
+      .metric-title {
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: #4b5563;
+      }
+
+      .metric-value {
+        font-size: 2.5rem;
+        font-weight: 700;
+        color: #111827;
+      }
+
+      .metric-subtitle {
+        font-size: 0.85rem;
+        color: #6b7280;
+      }
+
+      .panel {
+        background: #fff;
+        border-radius: 18px;
+        box-shadow: 0 18px 45px rgba(15, 23, 42, 0.08);
+        overflow: hidden;
+      }
+
+      .panel-header {
+        padding: 20px 24px;
+        border-bottom: 1px solid #e5e7eb;
+      }
+
+      .panel-header h2 {
+        margin: 0;
+        font-size: 1.2rem;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+      }
+
+      thead {
+        background: #f9fafb;
+      }
+
+      th,
+      td {
+        padding: 14px 18px;
+        text-align: left;
+        font-size: 0.95rem;
+        border-bottom: 1px solid #f1f5f9;
+      }
+
+      tbody tr:hover {
+        background: rgba(99, 102, 241, 0.04);
+      }
+
+      .muted {
+        color: #6b7280;
+      }
+
+      .status-banner {
+        padding: 12px 18px;
+        border-radius: 12px;
+        font-size: 0.95rem;
+        background: rgba(99, 102, 241, 0.08);
+        color: #312e81;
+      }
+
+      @media (max-width: 900px) {
+        .layout {
+          flex-direction: column;
+        }
+
+        .sidebar {
+          width: 100%;
+          flex-direction: row;
+          align-items: center;
+          justify-content: space-between;
+        }
+
+        .nav-links {
+          flex-direction: row;
+        }
+
+        main {
+          padding: 24px;
+        }
+
+        header {
+          position: static;
+        }
+
+        header button {
+          width: auto;
+        }
+      }
+
+      .button-secondary {
+        background: #f3f4f6;
+        color: #1f2937;
+      }
+
+      .button-secondary:hover {
+        box-shadow: 0 12px 28px rgba(107, 114, 128, 0.25);
+      }
+
+      .table-wrapper {
+        overflow-x: auto;
+        scrollbar-width: thin;
+      }
+
+      .table-wrapper::-webkit-scrollbar {
+        height: 10px;
+      }
+
+      .table-wrapper::-webkit-scrollbar-thumb {
+        background: rgba(148, 163, 184, 0.6);
+        border-radius: 999px;
+      }
+
+      table {
+        min-width: 2000px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="layout">
+      <aside class="sidebar">
+        <h1>Admin Center</h1>
+        <nav class="nav-links">
+          <a href="admin.html" class="active">Users</a>
+          <a href="customer_support.html">Support</a>
+        </nav>
+      </aside>
+      <div class="content">
+        <header>
+          <h2>Users Overview</h2>
+          <div class="header-actions">
+            <button id="refresh" class="button-secondary">Refresh</button>
+            <button id="sign-out">Sign out</button>
+          </div>
+        </header>
+        <main>
+          <div id="status" class="status-banner" aria-live="polite">
+            Loading metrics…
+          </div>
+          <section class="metrics">
+            <article class="metric-card">
+              <span class="metric-title">Signups (24h)</span>
+              <span id="metric-signups-day" class="metric-value">–</span>
+              <span class="metric-subtitle">Users created in the last 24 hours</span>
+            </article>
+            <article class="metric-card">
+              <span class="metric-title">Signups (7d)</span>
+              <span id="metric-signups-week" class="metric-value">–</span>
+              <span class="metric-subtitle">Users created in the last 7 days</span>
+            </article>
+            <article class="metric-card">
+              <span class="metric-title">Active (24h)</span>
+              <span id="metric-active-day" class="metric-value">–</span>
+              <span class="metric-subtitle">Users active in the last 24 hours</span>
+            </article>
+            <article class="metric-card">
+              <span class="metric-title">Active (7d)</span>
+              <span id="metric-active-week" class="metric-value">–</span>
+              <span class="metric-subtitle">Users active in the last 7 days</span>
+            </article>
+          </section>
+
+          <section class="panel">
+            <div class="panel-header">
+              <h2>Users</h2>
+            </div>
+            <div class="table-wrapper">
+              <table>
+                <thead>
+                  <tr>
+                    <th>ID</th>
+                    <th>Tier</th>
+                    <th>Created</th>
+                    <th>Last Used</th>
+                    <th>Daily Classic</th>
+                    <th>Daily Reasoning</th>
+                    <th>Total Classic (Free)</th>
+                    <th>Total Classic (Premium)</th>
+                    <th>Total Reasoning</th>
+                    <th>Classic Output Tokens</th>
+                    <th>Reasoning Output Tokens</th>
+                    <th>Classic Cache Miss</th>
+                    <th>Classic Cache Hit</th>
+                    <th>Reasoning Cache Miss</th>
+                    <th>Reasoning Cache Hit</th>
+                    <th>Premium Days</th>
+                    <th>Free Days</th>
+                    <th>Info</th>
+                    <th>Hadis ID</th>
+                    <th>Story ID</th>
+                    <th>Fun Fact ID</th>
+                  </tr>
+                </thead>
+                <tbody id="users-table-body">
+                  <tr>
+                    <td colspan="21" class="muted">Loading user data…</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+        </main>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script>
+      const SUPABASE_URL = "https://ewxkgalpibbumalylmma.supabase.co";
+      const SUPABASE_ANON_KEY =
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV3eGtnYWxwaWJidW1hbHlsbW1hIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDk5ODY2MzUsImV4cCI6MjA2NTU2MjYzNX0.VVg1x3-m1bsuU2RpJgnGqUqACZ7FVdisdctjobGQ680";
+
+      const { createClient } = window.supabase;
+      const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+      const statusBanner = document.getElementById("status");
+      const metrics = {
+        signupsDay: document.getElementById("metric-signups-day"),
+        signupsWeek: document.getElementById("metric-signups-week"),
+        activeDay: document.getElementById("metric-active-day"),
+        activeWeek: document.getElementById("metric-active-week"),
+      };
+
+      const usersTableBody = document.getElementById("users-table-body");
+      const signOutBtn = document.getElementById("sign-out");
+      const refreshBtn = document.getElementById("refresh");
+
+      signOutBtn.addEventListener("click", async () => {
+        await supabase.auth.signOut();
+        window.location.href = "login.html";
+      });
+
+      refreshBtn.addEventListener("click", () => {
+        refreshDashboard();
+      });
+
+      function formatDate(value) {
+        if (!value) return "—";
+        const date = new Date(value);
+        if (Number.isNaN(date.valueOf())) {
+          return value;
+        }
+        return `${date.toLocaleDateString()} ${date.toLocaleTimeString([], {
+          hour: "2-digit",
+          minute: "2-digit",
+        })}`;
+      }
+
+      async function ensureSession() {
+        const {
+          data: { session },
+          error,
+        } = await supabase.auth.getSession();
+        if (error || !session) {
+          window.location.href = "login.html";
+          return null;
+        }
+        return session;
+      }
+
+      async function fetchCount(column, sinceIso) {
+        const { count, error } = await supabase
+          .from("users")
+          .select("id", { count: "exact", head: true })
+          .gte(column, sinceIso);
+
+        if (error) {
+          throw error;
+        }
+
+        return count ?? 0;
+      }
+
+      async function loadMetrics() {
+        const now = Date.now();
+        const dayAgoIso = new Date(now - 24 * 60 * 60 * 1000).toISOString();
+        const weekAgoIso = new Date(now - 7 * 24 * 60 * 60 * 1000).toISOString();
+
+        const [signupsDay, signupsWeek, activeDay, activeWeek] = await Promise.all(
+          [
+            fetchCount("created_on", dayAgoIso),
+            fetchCount("created_on", weekAgoIso),
+            fetchCount("last_used", dayAgoIso),
+            fetchCount("last_used", weekAgoIso),
+          ]
+        );
+
+        metrics.signupsDay.textContent = signupsDay;
+        metrics.signupsWeek.textContent = signupsWeek;
+        metrics.activeDay.textContent = activeDay;
+        metrics.activeWeek.textContent = activeWeek;
+      }
+
+      function renderUsersTable(users) {
+        if (!users || users.length === 0) {
+          usersTableBody.innerHTML =
+          '<tr><td colspan="21" class="muted">No users found.</td></tr>';
+          return;
+        }
+
+        usersTableBody.innerHTML = users
+          .map(
+            (user) => `
+              <tr>
+                <td>${user.id}</td>
+                <td>${user.account_tier}</td>
+                <td>${formatDate(user.created_on)}</td>
+                <td>${formatDate(user.last_used)}</td>
+                <td>${user.daily_classic_message_count}</td>
+                <td>${user.daily_reasoning_message_count}</td>
+                <td>${user.total_classic_message_count_free}</td>
+                <td>${user.total_classic_message_count_premium}</td>
+                <td>${user.total_reasoning_message_count}</td>
+                <td>${user.total_classic_output_tokens}</td>
+                <td>${user.total_reasoning_output_tokens}</td>
+                <td>${user.total_classic_input_tokens_cache_miss}</td>
+                <td>${user.total_classic_input_tokens_cache_hit}</td>
+                <td>${user.total_reasoning_input_tokens_cache_miss}</td>
+                <td>${user.total_reasoning_input_tokens_cache_hit}</td>
+                <td>${user.premium_days}</td>
+                <td>${user.free_days}</td>
+                <td>${user.info ?? "—"}</td>
+                <td>${user.hadis_id ?? "—"}</td>
+                <td>${user.story_id ?? "—"}</td>
+                <td>${user.fun_fact_id ?? "—"}</td>
+              </tr>
+            `
+          )
+          .join("");
+      }
+
+      async function loadUsers() {
+        const { data, error } = await supabase
+          .from("users")
+          .select(
+            `
+            id,
+            account_tier,
+            created_on,
+            last_used,
+            daily_classic_message_count,
+            daily_reasoning_message_count,
+            total_classic_message_count_free,
+            total_classic_message_count_premium,
+            total_reasoning_message_count,
+            total_classic_output_tokens,
+            total_reasoning_output_tokens,
+            total_classic_input_tokens_cache_miss,
+            total_classic_input_tokens_cache_hit,
+            total_reasoning_input_tokens_cache_miss,
+            total_reasoning_input_tokens_cache_hit,
+            premium_days,
+            free_days,
+            info,
+            hadis_id,
+            story_id,
+            fun_fact_id
+          `
+          )
+          .order("created_on", { ascending: false })
+          .limit(200);
+        
+        const { data: proxyData, error: proxyError } = await supabase.functions.invoke('proxy', {
+            body: { endpoint: 'get_users' },
+        })
+        console.log(proxyData.length);
+
+        if (proxyError) {
+            throw proxyError;
+        }
+
+        if (error) {
+          throw error;
+        }
+
+        renderUsersTable(data);
+      }
+
+      async function refreshDashboard({ skipSessionCheck = false } = {}) {
+        try {
+          refreshBtn.disabled = true;
+          refreshBtn.textContent = "Refreshing…";
+          statusBanner.textContent = "Syncing data…";
+
+          if (!skipSessionCheck) {
+            const session = await ensureSession();
+            if (!session) return;
+          }
+
+          await Promise.all([loadMetrics(), loadUsers()]);
+          statusBanner.textContent = "Dashboard updated.";
+        } catch (error) {
+          console.error("Failed to load admin data:", error);
+          statusBanner.textContent =
+            error.message || "Failed to load dashboard data.";
+        } finally {
+          refreshBtn.disabled = false;
+          refreshBtn.textContent = "Refresh";
+        }
+      }
+
+      async function initialise() {
+        const session = await ensureSession();
+        if (!session) return;
+
+        await refreshDashboard({ skipSessionCheck: true });
+      }
+
+      initialise();
+    </script>
+  </body>
+</html>
+
