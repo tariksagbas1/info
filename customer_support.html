@@ -292,13 +292,13 @@
       <aside class="sidebar">
         <h1>Admin Center</h1>
         <nav class="nav-links">
-          <a href="admin.html">Users</a>
-          <a href="customer_support.html" class="active">Support</a>
+          <a href="admin.html">Kullanıcılar</a>
+          <a href="customer_support.html" class="active">Destek</a>
         </nav>
       </aside>
       <div class="content">
         <header>
-          <h2>Support Overview</h2>
+          <h2>Destek Paneli</h2>
           <div class="header-actions">
             <button id="refresh" class="button-secondary">Refresh</button>
             <button id="sign-out">Sign out</button>
@@ -306,7 +306,7 @@
         </header>
         <main>
           <div id="status" class="status-banner" aria-live="polite">
-            Loading support metrics…
+            Destek metrikleri yükleniyor...
           </div>
           <section class="metrics">
             <article class="metric-card">
@@ -323,7 +323,7 @@
 
           <section class="panel">
             <div class="panel-header">
-              <h2>Support Tickets</h2>
+              <h2>Destek Talepleri</h2>
             </div>
             <div class="table-wrapper">
               <table>
@@ -341,7 +341,7 @@
                 </thead>
                 <tbody id="tickets-table-body">
                   <tr>
-                    <td colspan="8" class="muted">Loading support tickets…</td>
+                    <td colspan="8" class="muted">Destek talepleri yükleniyor…</td>
                   </tr>
                 </tbody>
               </table>
@@ -454,7 +454,7 @@
 
         if (!data || data.length === 0) {
           ticketsTableBody.innerHTML =
-            '<tr><td colspan="8" class="muted">No support tickets found.</td></tr>';
+            '<tr><td colspan="8" class="muted">Destek talebi bulunamadı.</td></tr>';
           return;
         }
 
@@ -479,8 +479,8 @@
       async function refreshDashboard({ skipSessionCheck = false } = {}) {
         try {
           refreshBtn.disabled = true;
-          refreshBtn.textContent = "Refreshing…";
-          statusBanner.textContent = "Syncing support data…";
+          refreshBtn.textContent = "Güncelleniyor...";
+          statusBanner.textContent = "Destek verileri eşleniyor...";
 
           if (!skipSessionCheck) {
             const session = await ensureSession();
@@ -488,14 +488,14 @@
           }
 
           await Promise.all([loadMetrics(), loadTickets()]);
-          statusBanner.textContent = "Support dashboard updated.";
+          statusBanner.textContent = "Destek paneli güncellendi.";
         } catch (error) {
-          console.error("Failed to load support data:", error);
+          console.error("Destek verileri yüklenemedi:", error);
           statusBanner.textContent =
-            error.message || "Failed to load support dashboard.";
+            error.message || "Destek verileri yüklenemedi.";
         } finally {
           refreshBtn.disabled = false;
-          refreshBtn.textContent = "Refresh";
+          refreshBtn.textContent = "Güncelle";
         }
       }
 

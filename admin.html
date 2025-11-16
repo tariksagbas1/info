@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Admin Dashboard</title>
+    <title>Admin Center</title>
     <style>
       :root {
         color-scheme: light dark;
@@ -516,48 +516,48 @@
       <aside class="sidebar">
         <h1>Admin Center</h1>
         <nav class="nav-links">
-          <a href="admin.html" class="active">Users</a>
-          <a href="customer_support.html">Support</a>
+          <a href="admin.html" class="active">Kullanıcılar</a>
+          <a href="customer_support.html">Destek</a>
         </nav>
       </aside>
       <div class="content">
         <header>
-          <h2>Users Overview</h2>
+          <h2>Kullanıcı Paneli</h2>
           <div class="header-actions">
-            <button id="refresh" class="button-secondary">Refresh</button>
-            <button id="sign-out">Sign out</button>
+            <button id="refresh" class="button-secondary">Güncelle</button>
+            <button id="sign-out">Çıkış Yap</button>
           </div>
         </header>
         <main>
           <div id="status" class="status-banner" aria-live="polite">
-            Loading metrics…
+            Metrikler yükleniyor...
           </div>
           <section class="metrics">
             <article class="metric-card">
-              <span class="metric-title">Signups (24h)</span>
+              <span class="metric-title">Kayıt Sayısı (24s)</span>
               <span id="metric-signups-day" class="metric-value">–</span>
-              <span class="metric-subtitle">Users created in the last 24 hours</span>
+              <span class="metric-subtitle">Son 24 saatte kaydolan kullanıcılar</span>
             </article>
             <article class="metric-card">
-              <span class="metric-title">Signups (7d)</span>
+              <span class="metric-title">Kayıt Sayısı (7g)</span>
               <span id="metric-signups-week" class="metric-value">–</span>
-              <span class="metric-subtitle">Users created in the last 7 days</span>
+              <span class="metric-subtitle">Son 7 günde kaydolan kullanıcılar</span>
             </article>
             <article class="metric-card">
-              <span class="metric-title">Active (24h)</span>
+              <span class="metric-title">Aktif (24s)</span>
               <span id="metric-active-day" class="metric-value">–</span>
-              <span class="metric-subtitle">Users active in the last 24 hours</span>
+              <span class="metric-subtitle">Son 24 saatte aktif kullanıcılar</span>
             </article>
             <article class="metric-card">
-              <span class="metric-title">Active (7d)</span>
+              <span class="metric-title">Aktif (7g)</span>
               <span id="metric-active-week" class="metric-value">–</span>
-              <span class="metric-subtitle">Users active in the last 7 days</span>
+              <span class="metric-subtitle">Son 7 günde aktif kullanıcılar</span>
             </article>
           </section>
 
           <section class="panel">
             <div class="panel-header">
-              <h2>Users</h2>
+              <h2>Kullanıcılar</h2>
               <div class="pagination-controls">
                 <button id="prev-page" class="pagination-btn" disabled>
                   <span>←</span>
@@ -973,9 +973,10 @@
           // Handle special cases - these will be sorted client-side
           if (sortColumn === "hadis_title" || sortColumn === "story_title" || 
               sortColumn === "fun_fact_title" || sortColumn === "total_classic_message_count" ||
-              sortColumn === "classic_cost" || sortColumn === "reasoning_cost") {
-            // These are calculated or joined columns, will sort client-side
-            // Just fetch without server-side sort
+              sortColumn === "classic_cost" || sortColumn === "reasoning_cost" ||
+              sortColumn === "last_used") {
+            // These are calculated or joined columns, or need special null handling
+            // Will sort client-side
           } else {
             // Regular column sorting
             query = query.order(sortColumn, { ascending: sortDirection });
@@ -1043,6 +1044,21 @@
               
               return (aVal - bVal) * sortDirection;
             });
+          } else if (sortColumn === "last_used") {
+            sortedData = [...data].sort((a, b) => {
+              const aVal = a.last_used;
+              const bVal = b.last_used;
+              
+              // Handle null values - always put them at the end
+              if (!aVal && !bVal) return 0;
+              if (!aVal) return 1; // a is null, put it after b
+              if (!bVal) return -1; // b is null, put it after a
+              
+              // Both have values, sort normally
+              const aDate = new Date(aVal).getTime();
+              const bDate = new Date(bVal).getTime();
+              return (aDate - bDate) * sortDirection;
+            });
           } else if (sortColumn === "hadis_title") {
             sortedData = [...data].sort((a, b) => {
               const aVal = a.daily_hadis?.hadis_title || "";
@@ -1070,8 +1086,8 @@
       async function refreshDashboard({ skipSessionCheck = false } = {}) {
         try {
           refreshBtn.disabled = true;
-          refreshBtn.textContent = "Refreshing…";
-          statusBanner.textContent = "Syncing data…";
+          refreshBtn.textContent = "Güncelleniyor...";
+          statusBanner.textContent = "Veriler eşleniyor...";
 
           if (!skipSessionCheck) {
             const session = await ensureSession();
@@ -1079,14 +1095,14 @@
           }
 
           await Promise.all([loadMetrics(), loadUsers()]);
-          statusBanner.textContent = "Dashboard updated.";
+          statusBanner.textContent = "Gösterge paneli güncellendi.";
         } catch (error) {
           console.error("Failed to load admin data:", error);
           statusBanner.textContent =
-            error.message || "Failed to load dashboard data.";
+            error.message || "Bilgiler yüklenemedi.";
         } finally {
           refreshBtn.disabled = false;
-          refreshBtn.textContent = "Refresh";
+          refreshBtn.textContent = "Güncelle";
         }
       }
 
